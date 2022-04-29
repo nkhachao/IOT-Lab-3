@@ -35,17 +35,25 @@ def subscribed(client, userdata, mid, granted_qos):
 def recv_message(client, userdata, message):
     decoded_message = message.payload.decode("utf-8")
     temp_data = {'value': True}
-    cmd = ""
+    cmd = 1
     #TODO: Update the cmd to control 2 devices
     try:
         jsonobj = json.loads(message.payload)
         if jsonobj['method'] == "setLED":
             temp_data['value'] = jsonobj['params']
             client.publish('v1/devices/me/attributes', json.dumps(temp_data), 1)
+            if jsonobj['params'] == False:
+                cmd = 0
+            else:
+                cmd = 1
             print('Sent', temp_data, 'to server, in response to', decoded_message)
         elif jsonobj['method'] == "setFAN":
             temp_data['value'] = jsonobj['params']
             client.publish('v1/devices/me/attributes', json.dumps(temp_data), 1)
+            if jsonobj['params'] == False:
+                cmd = 2
+            else:
+                cmd = 3
             print('Sent', temp_data, 'to server, in response to', decoded_message)
         else:
             print('Received unsupported command', decoded_message, 'from server')
