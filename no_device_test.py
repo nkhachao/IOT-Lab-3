@@ -1,23 +1,18 @@
 import paho.mqtt.client as mqttclient
 import time
 import json
-import serial.tools.list_ports
 from process_data import processData
 from constants import bbc_port, THINGS_BOARD_ACCESS_TOKEN, BROKER_ADDRESS, PORT
 
 print("IoT Gateway")
-mess = ""
-
-
-if len(bbc_port) > 0:
-    ser = serial.Serial(port=bbc_port, baudrate=115200)
+mess = "!1:TEMP:21#!1:LIGHT:128#"
 
 
 def readSerial():
-    bytesToRead = ser.inWaiting()
+    bytesToRead = 1
     if (bytesToRead > 0):
         global mess
-        mess = mess + ser.read(bytesToRead).decode("UTF-8")
+        #mess = mess + ser.read(bytesToRead).decode("UTF-8")
         while ("#" in mess) and ("!" in mess):
             start = mess.find("!")
             end = mess.find("#")
@@ -47,9 +42,6 @@ def recv_message(client, userdata, message):
             client.publish('v1/devices/me/attributes', json.dumps(temp_data), 1)
     except:
         pass
-
-    if len(bbc_port) > 0:
-        ser.write((str(cmd) + "#").encode())
 
 
 def connected(client, usedata, flags, rc):
