@@ -10,4 +10,4 @@ def processData(client, data):
     json_data = {splitData[1]: splitData[2]}
 
     client.publish('v1/devices/me/telemetry', json.dumps(json_data), 1)
-    print('Sent', json_data, 'to server, from received data', splitData)
+    print('Sent', json_data, 'to server, from received sensor data', splitData)
